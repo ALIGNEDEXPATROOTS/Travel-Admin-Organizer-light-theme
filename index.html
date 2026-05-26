@@ -1,0 +1,1915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Travel Admin Organizer (Light) — Aligned Expat Roots</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;1,400;1,700&family=Space+Grotesk:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary:    #faf3ec;
+  --bg-secondary:  #f0e8df;
+  --bg-card:       #ffffff;
+  --bg-input:      #f7f1ea;
+  --accent-matcha: #7aaa28;
+  --accent-coral:  #e07060;
+  --accent-teal:   #3aaa99;
+  --accent-sky:    #4a8fb5;
+  --watermelon:    #d94040;
+  --driftwood:     #8a7a68;
+  --text-white:    #1a1a1a;
+  --text-soft:     #2b2420;
+  --text-muted:    #7a6a58;
+  --font-display:  'Fraunces', serif;
+  --font-body:     'Space Grotesk', sans-serif;
+  --font-mono:     'JetBrains Mono', monospace;
+  --radius:        12px;
+  --radius-sm:     8px;
+  --border:        1px solid rgba(0,0,0,0.09);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-soft);
+  font-family: var(--font-body);
+  font-size: 14px;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Subtle warm paper texture */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.025'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.6;
+}
+
+/* ======================== HEADER ======================== */
+.header {
+  padding: 32px 28px 0;
+  position: relative;
+  z-index: 1;
+}
+.header-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent-matcha);
+  margin-bottom: 8px;
+}
+.header-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-white);
+  line-height: 1.1;
+}
+.header-title em {
+  font-style: italic;
+  color: var(--accent-coral);
+}
+.header-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+/* ======================== TABS ======================== */
+.tabs-wrapper {
+  padding: 24px 28px 0;
+  position: relative;
+  z-index: 1;
+}
+.tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid rgba(0,0,0,0.09);
+  padding-bottom: 0;
+}
+.tab-btn {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+  border-bottom: none;
+  position: relative;
+  bottom: -1px;
+}
+.tab-btn:hover { color: var(--text-soft); background: rgba(0,0,0,0.04); }
+.tab-btn.active {
+  color: var(--accent-matcha);
+  background: var(--bg-card);
+  border-color: rgba(0,0,0,0.09);
+  border-bottom-color: var(--bg-card);
+}
+
+/* ======================== CONTENT AREA ======================== */
+.content {
+  padding: 24px 28px 40px;
+  position: relative;
+  z-index: 1;
+}
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ======================== CARDS ======================== */
+.card {
+  background: var(--bg-card);
+  border: var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.card-title {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-white);
+}
+.card-subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.section-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent-teal);
+  margin-bottom: 12px;
+}
+
+/* ======================== FORMS ======================== */
+.form-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr 1fr;
+}
+.form-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.form-grid.cols-1 { grid-template-columns: 1fr; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group.full { grid-column: 1 / -1; }
+label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+input, select, textarea {
+  background: var(--bg-input);
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: var(--radius-sm);
+  color: var(--text-soft);
+  font-family: var(--font-body);
+  font-size: 13px;
+  padding: 9px 12px;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--accent-matcha);
+  box-shadow: 0 0 0 2px rgba(122,170,40,0.12);
+}
+select option { background: var(--bg-card); color: var(--text-soft); }
+textarea { resize: vertical; min-height: 70px; }
+
+/* ======================== BUTTONS ======================== */
+@keyframes buttonGlow {
+  0%   { box-shadow: 0 0 14px 3px rgba(122,170,40,0.35); }
+  33%  { box-shadow: 0 0 14px 3px rgba(224,112,96,0.35); }
+  66%  { box-shadow: 0 0 14px 3px rgba(58,170,153,0.35); }
+  100% { box-shadow: 0 0 14px 3px rgba(122,170,40,0.35); }
+}
+.btn {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  padding: 10px 18px;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.btn-primary {
+  background: var(--accent-matcha);
+  color: var(--bg-primary);
+  animation: buttonGlow 3s ease-in-out infinite;
+}
+.btn-primary:hover { transform: scale(1.03); }
+.btn-secondary {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid rgba(0,0,0,0.15);
+}
+.btn-secondary:hover { color: var(--text-soft); border-color: rgba(0,0,0,0.3); }
+.btn-danger {
+  background: transparent;
+  color: var(--watermelon);
+  border: 1px solid rgba(217,64,64,0.25);
+  font-size: 9px;
+  padding: 6px 10px;
+}
+.btn-danger:hover { background: rgba(217,64,64,0.08); }
+.btn-sm { padding: 6px 12px; font-size: 9px; }
+.btn-teal { background: var(--accent-teal); color: var(--bg-primary); }
+.btn-coral { background: var(--accent-coral); color: var(--bg-primary); }
+
+/* ======================== ITEMS LIST ======================== */
+.items-list { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+.item-row {
+  background: var(--bg-secondary);
+  border: var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  transition: border-color 0.2s;
+  animation: fadeIn 0.3s ease;
+}
+.item-row:hover { border-color: rgba(0,0,0,0.18); }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.item-body { flex: 1; }
+.item-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-white);
+  margin-bottom: 4px;
+}
+.item-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+.item-actions { display: flex; gap: 6px; align-items: flex-start; flex-shrink: 0; }
+
+/* ======================== STATUS BADGES ======================== */
+.badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  padding: 3px 8px;
+  display: inline-block;
+}
+.badge-green  { background: rgba(122,170,40,0.12);  color: #5a8a10; }
+.badge-orange { background: rgba(224,112,96,0.12);  color: #c05040; }
+.badge-red    { background: rgba(217,64,64,0.12);   color: var(--watermelon); }
+.badge-blue   { background: rgba(58,170,153,0.12);  color: #2a8a7a; }
+.badge-grey   { background: rgba(138,122,104,0.12); color: var(--driftwood); }
+
+/* ======================== PROGRESS BAR ======================== */
+.progress-bar {
+  height: 4px;
+  background: rgba(0,0,0,0.08);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+/* ======================== COUNTDOWN ======================== */
+.countdown-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+.countdown-card {
+  background: var(--bg-secondary);
+  border: var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.countdown-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+}
+.countdown-card.urgent::before { background: var(--watermelon); }
+.countdown-card.warning::before { background: var(--accent-coral); }
+.countdown-card.ok::before { background: var(--accent-matcha); }
+.countdown-days {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.countdown-card.urgent .countdown-days { color: var(--watermelon); }
+.countdown-card.warning .countdown-days { color: var(--accent-coral); }
+.countdown-card.ok .countdown-days { color: var(--accent-matcha); }
+.countdown-label { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+
+/* ======================== CHECKLIST ======================== */
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--bg-secondary);
+  border: var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.checklist-item:hover { border-color: rgba(0,0,0,0.18); }
+.checklist-item.done { opacity: 0.5; }
+.checklist-item.done .check-label { text-decoration: line-through; color: var(--text-muted); }
+.check-box {
+  width: 18px; height: 18px;
+  border-radius: 4px;
+  border: 2px solid rgba(0,0,0,0.2);
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+  background: transparent;
+  cursor: pointer;
+}
+.check-box.checked {
+  background: var(--accent-matcha);
+  border-color: var(--accent-matcha);
+}
+.check-box.checked::after { content: '✓'; font-size: 11px; color: var(--bg-primary); font-weight: 700; }
+.check-label { flex: 1; font-size: 13px; }
+.check-category {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 16px 0 8px;
+}
+
+/* ======================== BUDGET ======================== */
+.budget-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.budget-stat {
+  background: var(--bg-secondary);
+  border: var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  text-align: center;
+}
+.budget-amount {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-white);
+  margin-bottom: 4px;
+}
+.budget-stat-label { font-size: 11px; color: var(--text-muted); }
+
+/* ======================== EMPTY STATE ======================== */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+}
+.empty-state-icon { font-size: 32px; margin-bottom: 12px; opacity: 0.5; }
+.empty-state-text { font-size: 13px; line-height: 1.6; }
+
+/* ======================== DIVIDER ======================== */
+.divider {
+  height: 1px;
+  background: rgba(0,0,0,0.07);
+  margin: 20px 0;
+}
+
+/* ======================== INLINE FORM TOGGLE ======================== */
+.add-form {
+  background: var(--bg-secondary);
+  border: 1px dashed rgba(122,170,40,0.35);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+  display: none;
+  animation: fadeIn 0.2s ease;
+}
+.add-form.open { display: block; }
+.form-actions { display: flex; gap: 8px; margin-top: 16px; justify-content: flex-end; }
+
+/* ======================== SPARKLE ======================== */
+@keyframes sparkleAnim {
+  0%   { opacity: 1; transform: translate(-50%,-50%) scale(1) rotate(0deg); }
+  100% { opacity: 0; transform: translate(-50%,-50%) scale(0.1) rotate(180deg) translateY(-15px); }
+}
+
+/* ======================== SCROLLBAR ======================== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: #d5c9be; border-radius: 3px; }
+
+/* ======================== RESPONSIVE ======================== */
+@media (max-width: 600px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .form-grid.cols-3 { grid-template-columns: 1fr; }
+  .budget-summary, .countdown-grid { grid-template-columns: 1fr 1fr; }
+  .header-title { font-size: 22px; }
+  .tabs { gap: 4px; }
+  .tab-btn { padding: 8px 10px; font-size: 9px; }
+  .content { padding: 16px; }
+}
+
+/* ======================== LINK STYLE ======================== */
+a { color: var(--accent-teal); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ======================== TOOLTIP ======================== */
+.tooltip { position: relative; display: inline-block; }
+.tooltip:hover::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-card);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 11px;
+  white-space: nowrap;
+  color: var(--text-soft);
+  z-index: 100;
+  font-family: var(--font-body);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-eyebrow">✦ Aligned Expat Roots — Skool Community Tool</div>
+  <div class="header-title">Travel Admin <em>Organizer</em></div>
+  <div class="header-sub">The unglamorous but essential one. Keep your documents, deadlines, bookings, and logistics in one place.</div>
+</div>
+
+<div class="tabs-wrapper">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('documents')">📄 Documents</button>
+    <button class="tab-btn" onclick="switchTab('visas')">🛂 Visas & Permits</button>
+    <button class="tab-btn" onclick="switchTab('trips')">✈️ Trips</button>
+    <button class="tab-btn" onclick="switchTab('deadlines')">⏰ Deadlines</button>
+    <button class="tab-btn" onclick="switchTab('health')">💉 Health</button>
+    <button class="tab-btn" onclick="switchTab('contacts')">📞 Contacts</button>
+    <button class="tab-btn" onclick="switchTab('packing')">🎒 Packing</button>
+    <button class="tab-btn" onclick="switchTab('budget')">💸 Budget</button>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ==================== DOCUMENTS ==================== -->
+<div id="tab-documents" class="tab-panel active">
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="section-eyebrow">Document Vault</div>
+        <div class="card-title">Passports & ID</div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="toggleForm('passport-form')">+ Add</button>
+    </div>
+    <div id="passport-form" class="add-form">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Document Type</label>
+          <select id="doc-type">
+            <option>Passport</option>
+            <option>National ID</option>
+            <option>Residency Card</option>
+            <option>Driver's License</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Country / Issuer</label>
+          <input type="text" id="doc-country" placeholder="e.g. United States">
+        </div>
+        <div class="form-group">
+          <label>Document Number</label>
+          <input type="text" id="doc-number" placeholder="Passport / ID number">
+        </div>
+        <div class="form-group">
+          <label>Expiry Date</label>
+          <input type="date" id="doc-expiry">
+        </div>
+        <div class="form-group">
+          <label>Issue Date</label>
+          <input type="date" id="doc-issue">
+        </div>
+        <div class="form-group">
+          <label>Stored Location / Notes</label>
+          <input type="text" id="doc-notes" placeholder="e.g. Safe at home / cloud backup link">
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-secondary" onclick="toggleForm('passport-form')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveDocument()">Save Document</button>
+      </div>
+    </div>
+    <div id="documents-list" class="items-list"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="section-eyebrow">Bookings & Reservations</div>
+        <div class="card-title">Flights, Hotels & Transport</div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="toggleForm('booking-form')">+ Add</button>
+    </div>
+    <div id="booking-form" class="add-form">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Type</label>
+          <select id="bk-type">
+            <option>Flight</option>
+            <option>Hotel / Accommodation</option>
+            <option>Train</option>
+            <option>Bus / Coach</option>
+            <option>Car Rental</option>
+            <option>Ferry</option>
+            <option>Airport Transfer</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Reference / Booking #</label>
+          <input type="text" id="bk-ref" placeholder="Confirmation code">
+        </div>
+        <div class="form-group">
+          <label>From</label>
+          <input type="text" id="bk-from" placeholder="Origin city / station">
+        </div>
+        <div class="form-group">
+          <label>To</label>
+          <input type="text" id="bk-to" placeholder="Destination">
+        </div>
+        <div class="form-group">
+          <label>Date & Time</label>
+          <input type="datetime-local" id="bk-date">
+        </div>
+        <div class="form-group">
+          <label>Provider / Airline</label>
+          <input type="text" id="bk-provider" placeholder="e.g. Iberia, Airbnb">
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="bk-status">
+            <option>Confirmed</option>
+            <option>Pending</option>
+            <option>Paid</option>
+            <option>Cancelled</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Link / Notes</label>
+          <input type="text" id="bk-notes" placeholder="URL or notes">
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-secondary" onclick="toggleForm('booking-form')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveBooking()">Save Booking</button>
+      </div>
+    </div>
+    <div id="bookings-list" class="items-list"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="section-eyebrow">Insurance</div>
+        <div class="card-title">Travel & Health Insurance</div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="toggleForm('insurance-form')">+ Add</button>
+    </div>
+    <div id="insurance-form" class="add-form">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Type</label>
+          <select id="ins-type">
+            <option>Travel Insurance</option>
+            <option>Health Insurance</option>
+            <option>Expat Health</option>
+            <option>Life Insurance</option>
+            <option>Home / Contents</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Provider</label>
+          <input type="text" id="ins-provider" placeholder="e.g. SafetyWing">
+        </div>
+        <div class="form-group">
+          <label>Policy Number</label>
+          <input type="text" id="ins-policy" placeholder="Policy / certificate #">
+        </div>
+        <div class="form-group">
+          <label>Coverage Period End</label>
+          <input type="date" id="ins-expiry">
+        </div>
+        <div class="form-group">
+          <label>Emergency Hotline</label>
+          <input type="text" id="ins-hotline" placeholder="+1 555 000 0000">
+        </div>
+        <div class="form-group">
+          <label>Notes / Coverage Summary</label>
+          <input type="text" id="ins-notes" placeholder="Key coverage details">
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-secondary" onclick="toggleForm('insurance-form')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveInsurance()">Save Insurance</button>
+      </div>
+    </div>
+    <div id="insurance-list" class="items-list"></div>
+  </div>
+</div>
+
+<!-- ==================== VISAS ==================== -->
+<div id="tab-visas" class="tab-panel">
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="section-eyebrow">Visa & Permit Tracker</div>
+        <div class="card-title">Active Visas, Residency & Permits</div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="toggleForm('visa-form')">+ Add</button>
+    </div>
+    <div id="visa-form" class="add-form">
+      <div class="form-grid cols-3">
+        <div class="form-group">
+          <label>Type</label>
+          <select id="visa-type">
+            <option>Tourist Visa</option>
+            <option>Visa-Free Entry</option>
+            <option>Digital Nomad Visa</option>
+            <option>Residency Permit</option>
+            <option>Work Permit</option>
+            <option>Student Visa</option>
+            <option>Business Visa</option>
+            <option>Schengen Visa</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Country</label>
+          <input type="text" id="visa-country" placeholder="Country">
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="visa-status">
+            <option>Active</option>
+            <option>Applied — Pending</option>
+            <option>To Apply</option>
+            <option>Expired</option>
+            <option>Rejected</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Entry Date</label>
+          <input type="date" id="visa-entry">
+        </div>
+        <div class="form-group">
+          <label>Expiry Date</label>
+          <input type="date" id="visa-expiry">
+        </div>
+        <div class="form-group">
+          <label>Visa Number</label>
+          <input type="text" id="visa-number" placeholder="Ref / sticker number">
+        </div>
+        <div class="form-group">
+          <label>Max Days Allowed</label>
+          <input type="number" id="visa-days" placeholder="e.g. 90">
+        </div>
+        <div class="form-group">
+          <label>Days Used</label>
+          <input type="number" id="visa-used" placeholder="Days spent so far">
+        </div>
+        <div class="form-group">
+          <label>Renewal Reminder</label>
+          <input type="date" id="visa-reminder" placeholder="Set alert date">
+        </div>
+        <div class="form-group full">
+          <label>Notes</label>
+          <textarea id="visa-notes" placeholder="Conditions, restrictions, requirements..."></textarea>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-secondary" onclick="toggleForm('visa-form')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveVisa()">Save Visa</button>
+      </div>
+    </div>
+    <div id="visas-list" class="items-list"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="section-eyebrow">Schengen Day Counter</div>
+        <div class="card-title">90/180 Day Rule Tracker</div>
+      </div>
+    </div>
+    <div style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">Track your entries into the Schengen Zone. The rule allows max 90 days in any 180-day rolling window.</div>
+    <div id="schengen-form" style="margin-bottom:16px;">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Entry Date</label>
+          <input type="date" id="sch-entry">
+        </div>
+        <div class="form-group">
+          <label>Exit Date (leave blank if still inside)</label>
+          <input type="date" id="sch-exit">
+        </div>
+        <div class="form-group">
+          <label>Country</label>
+          <input type="text" id="sch-country" placeholder="e.g. Spain">
+        </div>
+      </div>
+      <div style="margin-top:12px;">
+        <button class="btn btn-teal btn-sm" onclick="addSchengenEntry()">+ Add Entry</button>
+      </div>
+    </div>
+    <div id="schengen-summary" class="budget-summary" style="grid-template-columns:1fr 1fr;"></div>
+    <div id="schengen-list" class="items-list"></div>
+  </div>
+</div>
+
+<!-- ==================== TRIPS ==================== -->
+<div id="tab-trips" class="tab-panel">
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="section-eyebrow">Trip Planner</div>
+        <div class="card-title">Upcoming & Past Trips</div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="toggleForm('trip-form')">+ Add Trip</button>
+    </div>
+    <div id="trip-form" class="add-form">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Trip Name</label>
+          <input type="text" id="trip-name" placeholder="e.g. Barcelona to Porto Run">
+        </div>
+        <div class="form-group">
+          <label>Purpose</label>
+          <select id="trip-purpose">
+            <option>Leisure / Tourism</option>
+            <option>Visa Run</option>
+            <option>Business</option>
+            <option>Medical</option>
+            <option>Family Visit</option>
+            <option>Relocation</option>
+            <option>Schengen Reset</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Departure Date</label>
+          <input type="date" id="trip-depart">
+        </div>
+        <div class="form-group">
+          <label>Return Date</label>
+          <input type="date" id="trip-return">
+        </div>
+        <div class="form-group">
+          <label>Destination(s)</label>
+          <input type="text" id="trip-dest" placeholder="Cities / countries">
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="trip-status">
+            <option>Planning</option>
+            <option>Booked</option>
+            <option>In Progress</option>
+            <option>Completed</option>
+            <option>Cancelled</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Notes / Itinerary Overview</label>
+          <textarea id="trip-notes" placeholder="Key details, must-dos, logistics notes..."></textarea>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-secondary" onclick="toggleForm('trip-form')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveTrip()">Save Trip</button>
+      </div>
+    </div>
+    <div id="trips-list" class="items-list"></div>
+  </div>
+</div>
+
+<!-- ==================== DEADLINES ==================== -->
+<div id="tab-deadlines" class="tab-panel">
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="section-eyebrow">Deadline Command Center</div>
+        <div class="card-title">Upcoming Countdowns</div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="toggleForm('deadline-form')">+ Add</button>
+    </div>
+    <div id="deadline-countdowns" class="countdown-grid"></div>
+    <div class="divider"></div>
+    <div id="deadline-form" class="add-form">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Deadline Name</label>
+          <input type="text" id="dl-name" placeholder="e.g. Visa renewal application">
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="dl-cat">
+            <option>Visa / Immigration</option>
+            <option>Passport</option>
+            <option>Insurance</option>
+            <option>Tax / Finance</option>
+            <option>Document Renewal</option>
+            <option>Booking Deadline</option>
+            <option>Medical</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Due Date</label>
+          <input type="date" id="dl-date">
+        </div>
+        <div class="form-group">
+          <label>Priority</label>
+          <select id="dl-priority">
+            <option>High</option>
+            <option>Medium</option>
+            <option>Low</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Notes</label>
+          <input type="text" id="dl-notes" placeholder="What needs to happen, where to go, what to prepare">
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-secondary" onclick="toggleForm('deadline-form')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveDeadline()">Save Deadline</button>
+      </div>
+    </div>
+    <div id="deadlines-list" class="items-list" style="margin-top:16px;"></div>
+  </div>
+</div>
+
+<!-- ==================== HEALTH ==================== -->
+<div id="tab-health" class="tab-panel">
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="section-eyebrow">Health & Medical</div>
+        <div class="card-title">Vaccinations & Health Certs</div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="toggleForm('vacc-form')">+ Add</button>
+    </div>
+    <div id="vacc-form" class="add-form">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Vaccine / Cert Name</label>
+          <input type="text" id="vacc-name" placeholder="e.g. Yellow Fever, COVID-19">
+        </div>
+        <div class="form-group">
+          <label>Date Administered</label>
+          <input type="date" id="vacc-date">
+        </div>
+        <div class="form-group">
+          <label>Expiry / Booster Due</label>
+          <input type="date" id="vacc-expiry">
+        </div>
+        <div class="form-group">
+          <label>Required For</label>
+          <input type="text" id="vacc-required" placeholder="e.g. Brazil, Kenya entry">
+        </div>
+        <div class="form-group">
+          <label>Certificate Location</label>
+          <input type="text" id="vacc-location" placeholder="Physical / digital link">
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="vacc-status">
+            <option>Up to date</option>
+            <option>Due soon</option>
+            <option>Expired</option>
+            <option>Not needed</option>
+            <option>Scheduled</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-secondary" onclick="toggleForm('vacc-form')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveVaccination()">Save</button>
+      </div>
+    </div>
+    <div id="vacc-list" class="items-list"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="section-eyebrow">Medical Info</div>
+        <div class="card-title">Prescriptions & Health Notes</div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="toggleForm('med-form')">+ Add</button>
+    </div>
+    <div id="med-form" class="add-form">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Item / Condition</label>
+          <input type="text" id="med-name" placeholder="e.g. Blood pressure medication">
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <select id="med-type">
+            <option>Prescription</option>
+            <option>OTC Medication</option>
+            <option>Chronic Condition</option>
+            <option>Allergy</option>
+            <option>Medical Device</option>
+            <option>Doctor Contact</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Details</label>
+          <input type="text" id="med-details" placeholder="Dosage, frequency, brand name">
+        </div>
+        <div class="form-group">
+          <label>Refill / Review Date</label>
+          <input type="date" id="med-refill">
+        </div>
+        <div class="form-group full">
+          <label>Notes</label>
+          <textarea id="med-notes" placeholder="Local equivalent names, where to get it abroad, doctor instructions..."></textarea>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-secondary" onclick="toggleForm('med-form')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveMedical()">Save</button>
+      </div>
+    </div>
+    <div id="medical-list" class="items-list"></div>
+  </div>
+</div>
+
+<!-- ==================== CONTACTS ==================== -->
+<div id="tab-contacts" class="tab-panel">
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="section-eyebrow">Emergency & Key Contacts</div>
+        <div class="card-title">Who to Call When Shit Hits the Fan</div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="toggleForm('contact-form')">+ Add</button>
+    </div>
+    <div id="contact-form" class="add-form">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Name / Organisation</label>
+          <input type="text" id="ct-name" placeholder="e.g. Spanish Embassy, Dr. García">
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="ct-cat">
+            <option>Embassy / Consulate</option>
+            <option>Insurance Hotline</option>
+            <option>Doctor / Medical</option>
+            <option>Lawyer / Immigration</option>
+            <option>Police / Emergency</option>
+            <option>Accommodation Contact</option>
+            <option>Family / Personal</option>
+            <option>Bank / Finance</option>
+            <option>Local Authority</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="text" id="ct-phone" placeholder="+34 000 000 000">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="ct-email" placeholder="contact@example.com">
+        </div>
+        <div class="form-group">
+          <label>Country / Location</label>
+          <input type="text" id="ct-country" placeholder="Where this contact is based">
+        </div>
+        <div class="form-group">
+          <label>Website / Address</label>
+          <input type="text" id="ct-address" placeholder="URL or physical address">
+        </div>
+        <div class="form-group full">
+          <label>Notes</label>
+          <textarea id="ct-notes" placeholder="Hours, languages, what they handle..."></textarea>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-secondary" onclick="toggleForm('contact-form')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveContact()">Save Contact</button>
+      </div>
+    </div>
+    <div id="contacts-list" class="items-list"></div>
+  </div>
+</div>
+
+<!-- ==================== PACKING ==================== -->
+<div id="tab-packing" class="tab-panel">
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="section-eyebrow">Packing Lists</div>
+        <div class="card-title">Customizable Checklists</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-secondary btn-sm" onclick="resetPacking()">Reset All</button>
+        <button class="btn btn-primary btn-sm" onclick="toggleForm('pack-form')">+ Add Item</button>
+      </div>
+    </div>
+    <div id="pack-form" class="add-form">
+      <div class="form-grid cols-3">
+        <div class="form-group">
+          <label>Item</label>
+          <input type="text" id="pack-name" placeholder="Item name">
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="pack-cat">
+            <option>Documents</option>
+            <option>Clothing</option>
+            <option>Electronics</option>
+            <option>Toiletries</option>
+            <option>Health & Meds</option>
+            <option>Money & Cards</option>
+            <option>Comfort / Sleep</option>
+            <option>Work / Remote</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Qty / Notes</label>
+          <input type="text" id="pack-qty" placeholder="e.g. x2, original + copy">
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-secondary" onclick="toggleForm('pack-form')">Cancel</button>
+        <button class="btn btn-primary" onclick="addPackingItem()">Add Item</button>
+      </div>
+    </div>
+    <div id="packing-progress" style="margin:12px 0 4px;">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);">
+        <span id="pack-count">0 / 0 packed</span>
+        <span id="pack-percent">0%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="pack-bar" style="width:0%;background:var(--accent-matcha);"></div>
+      </div>
+    </div>
+    <div id="packing-list"></div>
+  </div>
+</div>
+
+<!-- ==================== BUDGET ==================== -->
+<div id="tab-budget" class="tab-panel">
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="section-eyebrow">Trip Budget Tracker</div>
+        <div class="card-title">Expenses & Payment Status</div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="toggleForm('budget-form')">+ Add Expense</button>
+    </div>
+    <div id="budget-summary-area" class="budget-summary">
+      <div class="budget-stat">
+        <div class="budget-amount" id="bgt-total">€0</div>
+        <div class="budget-stat-label">Total Budget</div>
+      </div>
+      <div class="budget-stat">
+        <div class="budget-amount" id="bgt-paid" style="color:var(--accent-matcha);">€0</div>
+        <div class="budget-stat-label">Paid</div>
+      </div>
+      <div class="budget-stat">
+        <div class="budget-amount" id="bgt-outstanding" style="color:var(--accent-coral);">€0</div>
+        <div class="budget-stat-label">Outstanding</div>
+      </div>
+    </div>
+    <div id="budget-form" class="add-form">
+      <div class="form-grid cols-3">
+        <div class="form-group">
+          <label>Expense Name</label>
+          <input type="text" id="bgt-name" placeholder="e.g. Flight MAD-LIS">
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="bgt-cat">
+            <option>Flights</option>
+            <option>Accommodation</option>
+            <option>Transport</option>
+            <option>Food & Drink</option>
+            <option>Visa / Fees</option>
+            <option>Insurance</option>
+            <option>Health / Medical</option>
+            <option>Activities</option>
+            <option>Shopping</option>
+            <option>Utilities / Admin</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Amount</label>
+          <input type="number" id="bgt-amount" placeholder="0.00" step="0.01">
+        </div>
+        <div class="form-group">
+          <label>Currency</label>
+          <select id="bgt-currency" onchange="updateBudgetCurrency()">
+            <option value="EUR|€">EUR € — Euro</option>
+            <option value="USD|$">USD $ — US Dollar</option>
+            <option value="GBP|£">GBP £ — British Pound</option>
+            <option value="CHF|CHF">CHF — Swiss Franc</option>
+            <option value="JPY|¥">JPY ¥ — Japanese Yen</option>
+            <option value="CNY|¥">CNY ¥ — Chinese Yuan</option>
+            <option value="AUD|A$">AUD A$ — Australian Dollar</option>
+            <option value="CAD|C$">CAD C$ — Canadian Dollar</option>
+            <option value="NZD|NZ$">NZD NZ$ — New Zealand Dollar</option>
+            <option value="SGD|S$">SGD S$ — Singapore Dollar</option>
+            <option value="HKD|HK$">HKD HK$ — Hong Kong Dollar</option>
+            <option value="NOK|kr">NOK kr — Norwegian Krone</option>
+            <option value="SEK|kr">SEK kr — Swedish Krona</option>
+            <option value="DKK|kr">DKK kr — Danish Krone</option>
+            <option value="MXN|$">MXN $ — Mexican Peso</option>
+            <option value="BRL|R$">BRL R$ — Brazilian Real</option>
+            <option value="INR|₹">INR ₹ — Indian Rupee</option>
+            <option value="KRW|₩">KRW ₩ — South Korean Won</option>
+            <option value="THB|฿">THB ฿ — Thai Baht</option>
+            <option value="AED|د.إ">AED — UAE Dirham</option>
+            <option value="ZAR|R">ZAR R — South African Rand</option>
+            <option value="TRY|₺">TRY ₺ — Turkish Lira</option>
+            <option value="PLN|zł">PLN zł — Polish Zloty</option>
+            <option value="CZK|Kč">CZK Kč — Czech Koruna</option>
+            <option value="HUF|Ft">HUF Ft — Hungarian Forint</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="bgt-status">
+            <option>Paid</option>
+            <option>Outstanding</option>
+            <option>Partially Paid</option>
+            <option>Refunded</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="bgt-date">
+        </div>
+        <div class="form-group full">
+          <label>Notes</label>
+          <input type="text" id="bgt-notes" placeholder="Reference, receipt link, who paid...">
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-secondary" onclick="toggleForm('budget-form')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveBudget()">Save Expense</button>
+      </div>
+    </div>
+    <div id="budget-list" class="items-list"></div>
+  </div>
+</div>
+
+</div><!-- end .content -->
+
+<script>
+// ==================== SPARKLE TRAIL ====================
+const sparkleColors = ['#7aaa28','#e07060','#3aaa99','#4a8fb5'];
+const sparkleCSS = document.createElement('style');
+sparkleCSS.textContent = `@keyframes sparkleAnim{0%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(0deg)}100%{opacity:0;transform:translate(-50%,-50%) scale(0.1) rotate(180deg) translateY(-15px)}}`;
+document.head.appendChild(sparkleCSS);
+function createSparkle(x,y){
+  const s=document.createElement('div');
+  const c=sparkleColors[Math.floor(Math.random()*sparkleColors.length)];
+  const sz=Math.random()*8+4;
+  s.style.cssText=`position:fixed;left:${x}px;top:${y}px;width:${sz}px;height:${sz}px;pointer-events:none;z-index:9999;transform:translate(-50%,-50%) rotate(45deg);background:${c};clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);animation:sparkleAnim 0.7s ease-out forwards;`;
+  document.body.appendChild(s);
+  setTimeout(()=>s.remove(),700);
+}
+let lastSpark=0;
+document.addEventListener('mousemove',e=>{
+  const now=Date.now();
+  if(now-lastSpark>40){createSparkle(e.clientX,e.clientY);lastSpark=now;}
+});
+
+// ==================== STATE ====================
+const store = {
+  documents:[],bookings:[],insurance:[],visas:[],schengen:[],
+  trips:[],deadlines:[],vaccinations:[],medical:[],
+  contacts:[],packing:[],budget:[]
+};
+
+function load(){
+  const saved=localStorage.getItem('aer_travel_admin_light');
+  if(saved){Object.assign(store,JSON.parse(saved));}
+}
+function save(){localStorage.setItem('aer_travel_admin_light',JSON.stringify(store));}
+load();
+
+// ==================== TABS ====================
+function switchTab(id){
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{
+    b.classList.toggle('active',b.getAttribute('onclick').includes(`'${id}'`));
+  });
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  renderAll();
+}
+
+// ==================== FORM TOGGLE ====================
+function toggleForm(id){
+  const f=document.getElementById(id);
+  f.classList.toggle('open');
+}
+
+// ==================== HELPERS ====================
+function daysUntil(dateStr){
+  if(!dateStr)return null;
+  const diff=new Date(dateStr)-new Date();
+  return Math.ceil(diff/(1000*60*60*24));
+}
+function formatDate(dateStr){
+  if(!dateStr)return '—';
+  return new Date(dateStr).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
+function statusBadge(status){
+  const map={
+    'Confirmed':'badge-green','Active':'badge-green','Up to date':'badge-green','Paid':'badge-green',
+    'Pending':'badge-orange','Applied — Pending':'badge-orange','Partially Paid':'badge-orange','Due soon':'badge-orange','Planning':'badge-orange',
+    'Expired':'badge-red','Cancelled':'badge-red','Rejected':'badge-red','Outstanding':'badge-red','Overdue':'badge-red',
+    'Booked':'badge-blue','Completed':'badge-blue','In Progress':'badge-blue','Scheduled':'badge-blue',
+    'To Apply':'badge-grey','Not needed':'badge-grey','Refunded':'badge-grey','Low':'badge-grey',
+  };
+  const cls=map[status]||'badge-grey';
+  return `<span class="badge ${cls}">${status}</span>`;
+}
+function expiryBadge(dateStr){
+  const d=daysUntil(dateStr);
+  if(d===null)return '';
+  if(d<0)return `<span class="badge badge-red">Expired ${Math.abs(d)}d ago</span>`;
+  if(d<=30)return `<span class="badge badge-red">Expires in ${d}d</span>`;
+  if(d<=90)return `<span class="badge badge-orange">Expires in ${d}d</span>`;
+  return `<span class="badge badge-green">Valid ${d}d</span>`;
+}
+function deleteItem(arr,id,renderFn){
+  const i=arr.findIndex(x=>x.id===id);
+  if(i>-1){arr.splice(i,1);save();renderFn();}
+}
+function emptyState(text='Nothing here yet. Add your first entry above.'){
+  return `<div class="empty-state"><div class="empty-state-icon">📋</div><div class="empty-state-text">${text}</div></div>`;
+}
+function clearInputs(...ids){ids.forEach(id=>{const el=document.getElementById(id);if(el)el.value='';})}
+
+// ==================== DOCUMENTS ====================
+function saveDocument(){
+  const type=document.getElementById('doc-type').value;
+  const country=document.getElementById('doc-country').value;
+  if(!type||!country){alert('Fill in document type and country.');return;}
+  store.documents.push({
+    id:uid(),type,country,
+    number:document.getElementById('doc-number').value,
+    expiry:document.getElementById('doc-expiry').value,
+    issue:document.getElementById('doc-issue').value,
+    notes:document.getElementById('doc-notes').value
+  });
+  save();
+  clearInputs('doc-number','doc-country','doc-expiry','doc-issue','doc-notes');
+  toggleForm('passport-form');
+  renderDocuments();
+}
+function renderDocuments(){
+  const el=document.getElementById('documents-list');
+  if(!el)return;
+  if(!store.documents.length){el.innerHTML=emptyState();return;}
+  el.innerHTML=store.documents.map(d=>`
+    <div class="item-row">
+      <div class="item-body">
+        <div class="item-title">${d.type} — ${d.country}</div>
+        <div class="item-meta">
+          ${d.number?`#${d.number} &nbsp;·&nbsp; `:''}
+          ${d.issue?`Issued: ${formatDate(d.issue)} &nbsp;·&nbsp; `:''}
+          ${d.expiry?`Expires: ${formatDate(d.expiry)}`:'No expiry recorded'}
+          ${d.notes?`<br>${d.notes}`:''}
+        </div>
+        <div style="margin-top:6px;">${expiryBadge(d.expiry)}</div>
+      </div>
+      <div class="item-actions">
+        <button class="btn btn-danger" onclick="deleteItem(store.documents,'${d.id}',renderDocuments)">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ==================== BOOKINGS ====================
+function saveBooking(){
+  const type=document.getElementById('bk-type').value;
+  const from=document.getElementById('bk-from').value;
+  if(!from){alert('Add an origin at minimum.');return;}
+  store.bookings.push({
+    id:uid(),type,
+    ref:document.getElementById('bk-ref').value,
+    from,
+    to:document.getElementById('bk-to').value,
+    date:document.getElementById('bk-date').value,
+    provider:document.getElementById('bk-provider').value,
+    status:document.getElementById('bk-status').value,
+    notes:document.getElementById('bk-notes').value
+  });
+  save();
+  clearInputs('bk-ref','bk-from','bk-to','bk-date','bk-provider','bk-notes');
+  toggleForm('booking-form');
+  renderBookings();
+}
+function renderBookings(){
+  const el=document.getElementById('bookings-list');
+  if(!el)return;
+  if(!store.bookings.length){el.innerHTML=emptyState();return;}
+  el.innerHTML=store.bookings.map(b=>`
+    <div class="item-row">
+      <div class="item-body">
+        <div class="item-title">${b.type}: ${b.from}${b.to?' → '+b.to:''}</div>
+        <div class="item-meta">
+          ${b.provider?b.provider+' &nbsp;·&nbsp; ':''}
+          ${b.ref?`Ref: ${b.ref} &nbsp;·&nbsp; `:''}
+          ${b.date?formatDate(b.date.split('T')[0]):''}
+          ${b.notes?`<br>${b.notes}`:''}
+        </div>
+        <div style="margin-top:6px;">${statusBadge(b.status)}</div>
+      </div>
+      <div class="item-actions">
+        <button class="btn btn-danger" onclick="deleteItem(store.bookings,'${b.id}',renderBookings)">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ==================== INSURANCE ====================
+function saveInsurance(){
+  const type=document.getElementById('ins-type').value;
+  const provider=document.getElementById('ins-provider').value;
+  store.insurance.push({
+    id:uid(),type,provider,
+    policy:document.getElementById('ins-policy').value,
+    expiry:document.getElementById('ins-expiry').value,
+    hotline:document.getElementById('ins-hotline').value,
+    notes:document.getElementById('ins-notes').value
+  });
+  save();
+  clearInputs('ins-provider','ins-policy','ins-expiry','ins-hotline','ins-notes');
+  toggleForm('insurance-form');
+  renderInsurance();
+}
+function renderInsurance(){
+  const el=document.getElementById('insurance-list');
+  if(!el)return;
+  if(!store.insurance.length){el.innerHTML=emptyState();return;}
+  el.innerHTML=store.insurance.map(ins=>`
+    <div class="item-row">
+      <div class="item-body">
+        <div class="item-title">${ins.type}${ins.provider?' — '+ins.provider:''}</div>
+        <div class="item-meta">
+          ${ins.policy?`Policy: ${ins.policy} &nbsp;·&nbsp; `:''}
+          ${ins.hotline?`Hotline: ${ins.hotline} &nbsp;·&nbsp; `:''}
+          ${ins.expiry?`Expires: ${formatDate(ins.expiry)}`:''}
+          ${ins.notes?`<br>${ins.notes}`:''}
+        </div>
+        <div style="margin-top:6px;">${expiryBadge(ins.expiry)}</div>
+      </div>
+      <div class="item-actions">
+        <button class="btn btn-danger" onclick="deleteItem(store.insurance,'${ins.id}',renderInsurance)">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ==================== VISAS ====================
+function saveVisa(){
+  const type=document.getElementById('visa-type').value;
+  const country=document.getElementById('visa-country').value;
+  if(!country){alert('Add a country.');return;}
+  store.visas.push({
+    id:uid(),type,country,
+    status:document.getElementById('visa-status').value,
+    entry:document.getElementById('visa-entry').value,
+    expiry:document.getElementById('visa-expiry').value,
+    number:document.getElementById('visa-number').value,
+    days:document.getElementById('visa-days').value,
+    used:document.getElementById('visa-used').value,
+    reminder:document.getElementById('visa-reminder').value,
+    notes:document.getElementById('visa-notes').value
+  });
+  save();
+  clearInputs('visa-country','visa-entry','visa-expiry','visa-number','visa-days','visa-used','visa-reminder','visa-notes');
+  toggleForm('visa-form');
+  renderVisas();
+}
+function renderVisas(){
+  const el=document.getElementById('visas-list');
+  if(!el)return;
+  if(!store.visas.length){el.innerHTML=emptyState('No visas or permits added yet.');return;}
+  el.innerHTML=store.visas.map(v=>{
+    const used=parseInt(v.used)||0;
+    const max=parseInt(v.days)||0;
+    const pct=max?Math.min(100,Math.round(used/max*100)):0;
+    return `
+    <div class="item-row">
+      <div class="item-body">
+        <div class="item-title">${v.type} — ${v.country}</div>
+        <div class="item-meta">
+          ${v.number?`#${v.number} &nbsp;·&nbsp; `:''}
+          ${v.entry?`Entry: ${formatDate(v.entry)} &nbsp;·&nbsp; `:''}
+          ${v.expiry?`Expires: ${formatDate(v.expiry)}`:''}
+          ${v.notes?`<br>${v.notes}`:''}
+        </div>
+        ${max?`<div style="font-size:11px;color:var(--text-muted);margin-top:6px;">${used} / ${max} days used</div><div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${pct>80?'var(--watermelon)':pct>60?'var(--accent-coral)':'var(--accent-matcha)'};"></div></div>`:''}
+        <div style="margin-top:6px;">${statusBadge(v.status)} ${expiryBadge(v.expiry)}</div>
+      </div>
+      <div class="item-actions">
+        <button class="btn btn-danger" onclick="deleteItem(store.visas,'${v.id}',renderVisas)">Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ==================== SCHENGEN ====================
+function addSchengenEntry(){
+  const entry=document.getElementById('sch-entry').value;
+  if(!entry){alert('Entry date required.');return;}
+  store.schengen.push({
+    id:uid(),
+    entry,
+    exit:document.getElementById('sch-exit').value,
+    country:document.getElementById('sch-country').value
+  });
+  save();
+  clearInputs('sch-entry','sch-exit','sch-country');
+  renderSchengen();
+}
+function calcSchengenDays(){
+  const now=new Date();
+  const window180=new Date(now-180*24*60*60*1000);
+  let total=0;
+  store.schengen.forEach(e=>{
+    const entry=new Date(e.entry);
+    const exit=e.exit?new Date(e.exit):now;
+    const start=entry>window180?entry:window180;
+    const end=exit<now?exit:now;
+    if(end>start)total+=Math.ceil((end-start)/(1000*60*60*24));
+  });
+  return total;
+}
+function renderSchengen(){
+  const sumEl=document.getElementById('schengen-summary');
+  const listEl=document.getElementById('schengen-list');
+  if(!sumEl||!listEl)return;
+  const used=calcSchengenDays();
+  const remaining=90-used;
+  const pct=Math.min(100,Math.round(used/90*100));
+  sumEl.innerHTML=`
+    <div class="budget-stat">
+      <div class="budget-amount" style="color:${used>80?'var(--watermelon)':used>60?'var(--accent-coral)':'var(--accent-matcha)'}">${used}</div>
+      <div class="budget-stat-label">Days Used (last 180d)</div>
+    </div>
+    <div class="budget-stat">
+      <div class="budget-amount" style="color:var(--accent-teal)">${Math.max(0,remaining)}</div>
+      <div class="budget-stat-label">Days Remaining</div>
+    </div>`;
+  if(!store.schengen.length){listEl.innerHTML=emptyState('No Schengen entries logged.');return;}
+  listEl.innerHTML='<div style="margin-top:4px;margin-bottom:8px;font-size:11px;color:var(--text-muted);">Days used: '+pct+'% of 90-day limit</div><div class="progress-bar" style="margin-bottom:16px;"><div class="progress-fill" style="width:'+pct+'%;background:'+( pct>88?'var(--watermelon)':pct>66?'var(--accent-coral)':'var(--accent-matcha)')+';"></div></div>'+
+  store.schengen.map(e=>`
+    <div class="item-row">
+      <div class="item-body">
+        <div class="item-title">${e.country||'Schengen Zone'}</div>
+        <div class="item-meta">Entry: ${formatDate(e.entry)} &nbsp;·&nbsp; Exit: ${e.exit?formatDate(e.exit):'<span style="color:var(--accent-coral)">Still inside</span>'}</div>
+      </div>
+      <div class="item-actions">
+        <button class="btn btn-danger" onclick="deleteItem(store.schengen,'${e.id}',renderSchengen)">Delete</button>
+      </div>
+    </div>`).join('');
+}
+
+// ==================== TRIPS ====================
+function saveTrip(){
+  const name=document.getElementById('trip-name').value;
+  if(!name){alert('Give the trip a name.');return;}
+  store.trips.push({
+    id:uid(),name,
+    purpose:document.getElementById('trip-purpose').value,
+    depart:document.getElementById('trip-depart').value,
+    return:document.getElementById('trip-return').value,
+    dest:document.getElementById('trip-dest').value,
+    status:document.getElementById('trip-status').value,
+    notes:document.getElementById('trip-notes').value
+  });
+  save();
+  clearInputs('trip-name','trip-depart','trip-return','trip-dest','trip-notes');
+  toggleForm('trip-form');
+  renderTrips();
+}
+function renderTrips(){
+  const el=document.getElementById('trips-list');
+  if(!el)return;
+  if(!store.trips.length){el.innerHTML=emptyState('No trips logged yet.');return;}
+  const sorted=[...store.trips].sort((a,b)=>new Date(a.depart||0)-new Date(b.depart||0));
+  el.innerHTML=sorted.map(t=>{
+    const d=daysUntil(t.depart);
+    let countdown='';
+    if(d!==null&&d>=0&&t.status!=='Completed')countdown=`<span class="badge badge-blue">Departs in ${d}d</span> `;
+    return `
+    <div class="item-row">
+      <div class="item-body">
+        <div class="item-title">${t.name}</div>
+        <div class="item-meta">
+          ${t.dest?t.dest+' &nbsp;·&nbsp; ':''}
+          ${t.purpose} &nbsp;·&nbsp;
+          ${t.depart?formatDate(t.depart):'TBD'}${t.return?' → '+formatDate(t.return):''}
+          ${t.notes?`<br>${t.notes}`:''}
+        </div>
+        <div style="margin-top:6px;">${countdown}${statusBadge(t.status)}</div>
+      </div>
+      <div class="item-actions">
+        <button class="btn btn-danger" onclick="deleteItem(store.trips,'${t.id}',renderTrips)">Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ==================== DEADLINES ====================
+function saveDeadline(){
+  const name=document.getElementById('dl-name').value;
+  const date=document.getElementById('dl-date').value;
+  if(!name||!date){alert('Name and date required.');return;}
+  store.deadlines.push({
+    id:uid(),name,date,
+    cat:document.getElementById('dl-cat').value,
+    priority:document.getElementById('dl-priority').value,
+    notes:document.getElementById('dl-notes').value,
+    done:false
+  });
+  save();
+  clearInputs('dl-name','dl-date','dl-notes');
+  toggleForm('deadline-form');
+  renderDeadlines();
+}
+function toggleDeadlineDone(id){
+  const d=store.deadlines.find(x=>x.id===id);
+  if(d){d.done=!d.done;save();renderDeadlines();}
+}
+function renderDeadlines(){
+  const cEl=document.getElementById('deadline-countdowns');
+  const lEl=document.getElementById('deadlines-list');
+  if(!cEl||!lEl)return;
+  const upcoming=store.deadlines.filter(d=>!d.done).sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,3);
+  if(upcoming.length){
+    cEl.innerHTML=upcoming.map(d=>{
+      const days=daysUntil(d.date);
+      const cls=days<0?'urgent':days<=14?'urgent':days<=30?'warning':'ok';
+      return `<div class="countdown-card ${cls}">
+        <div class="countdown-days">${days<0?'!':days}</div>
+        <div class="countdown-label">${days<0?'OVERDUE':days===0?'TODAY':'days left'}<br><strong>${d.name}</strong></div>
+      </div>`;
+    }).join('');
+  } else {
+    cEl.innerHTML='<div style="color:var(--text-muted);font-size:13px;padding:12px 0;">No upcoming deadlines. You\'re on top of it.</div>';
+  }
+  if(!store.deadlines.length){lEl.innerHTML='';return;}
+  const sorted=[...store.deadlines].sort((a,b)=>a.done-b.done||new Date(a.date)-new Date(b.date));
+  lEl.innerHTML=sorted.map(d=>{
+    const days=daysUntil(d.date);
+    return `
+    <div class="item-row" style="${d.done?'opacity:0.45;':''}">
+      <div class="item-body">
+        <div class="item-title" style="${d.done?'text-decoration:line-through;':''}">${d.name}</div>
+        <div class="item-meta">
+          ${d.cat} &nbsp;·&nbsp; ${formatDate(d.date)}
+          ${d.notes?` &nbsp;·&nbsp; ${d.notes}`:''}
+        </div>
+        <div style="margin-top:6px;">
+          <span class="badge ${d.priority==='High'?'badge-red':d.priority==='Medium'?'badge-orange':'badge-grey'}">${d.priority}</span>
+          ${days!==null?`<span class="badge ${days<0?'badge-red':days<=14?'badge-red':days<=30?'badge-orange':'badge-green'}" style="margin-left:4px;">${days<0?'Overdue '+Math.abs(days)+'d':days+'d left'}</span>`:''}
+        </div>
+      </div>
+      <div class="item-actions">
+        <button class="btn btn-secondary btn-sm" onclick="toggleDeadlineDone('${d.id}')">${d.done?'Undo':'Done'}</button>
+        <button class="btn btn-danger" onclick="deleteItem(store.deadlines,'${d.id}',renderDeadlines)">Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ==================== VACCINATIONS ====================
+function saveVaccination(){
+  const name=document.getElementById('vacc-name').value;
+  if(!name){alert('Vaccine name required.');return;}
+  store.vaccinations.push({
+    id:uid(),name,
+    date:document.getElementById('vacc-date').value,
+    expiry:document.getElementById('vacc-expiry').value,
+    required:document.getElementById('vacc-required').value,
+    location:document.getElementById('vacc-location').value,
+    status:document.getElementById('vacc-status').value
+  });
+  save();
+  clearInputs('vacc-name','vacc-date','vacc-expiry','vacc-required','vacc-location');
+  toggleForm('vacc-form');
+  renderVaccinations();
+}
+function renderVaccinations(){
+  const el=document.getElementById('vacc-list');
+  if(!el)return;
+  if(!store.vaccinations.length){el.innerHTML=emptyState('No vaccines logged.');return;}
+  el.innerHTML=store.vaccinations.map(v=>`
+    <div class="item-row">
+      <div class="item-body">
+        <div class="item-title">${v.name}</div>
+        <div class="item-meta">
+          ${v.date?`Given: ${formatDate(v.date)} &nbsp;·&nbsp; `:''}
+          ${v.expiry?`Booster/Expiry: ${formatDate(v.expiry)} &nbsp;·&nbsp; `:''}
+          ${v.required?`Required for: ${v.required}`:''}
+          ${v.location?`<br>Cert: ${v.location}`:''}
+        </div>
+        <div style="margin-top:6px;">${statusBadge(v.status)} ${expiryBadge(v.expiry)}</div>
+      </div>
+      <div class="item-actions">
+        <button class="btn btn-danger" onclick="deleteItem(store.vaccinations,'${v.id}',renderVaccinations)">Delete</button>
+      </div>
+    </div>`).join('');
+}
+
+// ==================== MEDICAL ====================
+function saveMedical(){
+  const name=document.getElementById('med-name').value;
+  if(!name){alert('Item name required.');return;}
+  store.medical.push({
+    id:uid(),name,
+    type:document.getElementById('med-type').value,
+    details:document.getElementById('med-details').value,
+    refill:document.getElementById('med-refill').value,
+    notes:document.getElementById('med-notes').value
+  });
+  save();
+  clearInputs('med-name','med-details','med-refill','med-notes');
+  toggleForm('med-form');
+  renderMedical();
+}
+function renderMedical(){
+  const el=document.getElementById('medical-list');
+  if(!el)return;
+  if(!store.medical.length){el.innerHTML=emptyState('No medical info added.');return;}
+  el.innerHTML=store.medical.map(m=>`
+    <div class="item-row">
+      <div class="item-body">
+        <div class="item-title">${m.name}</div>
+        <div class="item-meta">
+          ${m.type} &nbsp;·&nbsp;
+          ${m.details?m.details+' &nbsp;·&nbsp; ':''}
+          ${m.refill?`Review: ${formatDate(m.refill)}`:''}
+          ${m.notes?`<br>${m.notes}`:''}
+        </div>
+      </div>
+      <div class="item-actions">
+        <button class="btn btn-danger" onclick="deleteItem(store.medical,'${m.id}',renderMedical)">Delete</button>
+      </div>
+    </div>`).join('');
+}
+
+// ==================== CONTACTS ====================
+function saveContact(){
+  const name=document.getElementById('ct-name').value;
+  if(!name){alert('Name required.');return;}
+  store.contacts.push({
+    id:uid(),name,
+    cat:document.getElementById('ct-cat').value,
+    phone:document.getElementById('ct-phone').value,
+    email:document.getElementById('ct-email').value,
+    country:document.getElementById('ct-country').value,
+    address:document.getElementById('ct-address').value,
+    notes:document.getElementById('ct-notes').value
+  });
+  save();
+  clearInputs('ct-name','ct-phone','ct-email','ct-country','ct-address','ct-notes');
+  toggleForm('contact-form');
+  renderContacts();
+}
+function renderContacts(){
+  const el=document.getElementById('contacts-list');
+  if(!el)return;
+  if(!store.contacts.length){el.innerHTML=emptyState('No contacts saved yet.');return;}
+  const cats=[...new Set(store.contacts.map(c=>c.cat))];
+  el.innerHTML=cats.map(cat=>{
+    const items=store.contacts.filter(c=>c.cat===cat);
+    return `<div class="check-category">${cat}</div>`+items.map(c=>`
+      <div class="item-row">
+        <div class="item-body">
+          <div class="item-title">${c.name}</div>
+          <div class="item-meta">
+            ${c.country?c.country+' &nbsp;·&nbsp; ':''}
+            ${c.phone?`<a href="tel:${c.phone}">${c.phone}</a> &nbsp;·&nbsp; `:''}
+            ${c.email?`<a href="mailto:${c.email}">${c.email}</a>`:''}
+            ${c.address?`<br>${c.address}`:''}
+            ${c.notes?`<br>${c.notes}`:''}
+          </div>
+        </div>
+        <div class="item-actions">
+          <button class="btn btn-danger" onclick="deleteItem(store.contacts,'${c.id}',renderContacts)">Delete</button>
+        </div>
+      </div>`).join('');
+  }).join('');
+}
+
+// ==================== PACKING ====================
+const DEFAULT_PACKING = [
+  {cat:'Documents',name:'Passport',qty:'Original + photocopy'},{cat:'Documents',name:'Visa / entry permit',qty:''},{cat:'Documents',name:'Travel insurance docs',qty:''},{cat:'Documents',name:'Booking confirmations',qty:'Screenshots offline'},{cat:'Documents',name:'Emergency contact list',qty:'Printed copy'},
+  {cat:'Money & Cards',name:'Credit / debit cards',qty:'2 minimum'},{cat:'Money & Cards',name:'Cash in local currency',qty:''},{cat:'Money & Cards',name:'Backup card',qty:'Separate from wallet'},
+  {cat:'Electronics',name:'Phone + charger',qty:''},{cat:'Electronics',name:'Laptop + charger',qty:''},{cat:'Electronics',name:'Power bank',qty:''},{cat:'Electronics',name:'Universal adapter',qty:''},{cat:'Electronics',name:'Earbuds / headphones',qty:''},
+  {cat:'Clothing',name:'Underwear',qty:''},{cat:'Clothing',name:'Socks',qty:''},{cat:'Clothing',name:'Weather-appropriate layers',qty:''},{cat:'Clothing',name:'Comfortable walking shoes',qty:''},
+  {cat:'Toiletries',name:'Toothbrush + toothpaste',qty:''},{cat:'Toiletries',name:'Deodorant',qty:''},{cat:'Toiletries',name:'Sunscreen',qty:''},{cat:'Toiletries',name:'Shampoo / conditioner',qty:'Travel size'},
+  {cat:'Health & Meds',name:'Prescription medications',qty:'Extra supply'},{cat:'Health & Meds',name:'Basic first aid',qty:'Paracetamol, plasters'},{cat:'Health & Meds',name:'Yellow fever / health certificate',qty:'If required'},
+  {cat:'Work / Remote',name:'Laptop',qty:''},{cat:'Work / Remote',name:'Noise-cancelling headphones',qty:''},{cat:'Work / Remote',name:'SIM card / eSIM',qty:''}
+];
+function addPackingItem(){
+  const name=document.getElementById('pack-name').value;
+  if(!name){alert('Item name required.');return;}
+  store.packing.push({
+    id:uid(),
+    name,
+    cat:document.getElementById('pack-cat').value,
+    qty:document.getElementById('pack-qty').value,
+    done:false
+  });
+  save();
+  clearInputs('pack-name','pack-qty');
+  toggleForm('pack-form');
+  renderPacking();
+}
+function initPacking(){
+  if(!store.packing.length){
+    store.packing=DEFAULT_PACKING.map(p=>({...p,id:uid(),done:false}));
+    save();
+  }
+}
+function togglePackItem(id){
+  const item=store.packing.find(x=>x.id===id);
+  if(item){item.done=!item.done;save();renderPacking();}
+}
+function resetPacking(){
+  if(confirm('Reset all items to unchecked?')){
+    store.packing.forEach(p=>p.done=false);
+    save();renderPacking();
+  }
+}
+function renderPacking(){
+  initPacking();
+  const el=document.getElementById('packing-list');
+  if(!el)return;
+  const total=store.packing.length;
+  const done=store.packing.filter(p=>p.done).length;
+  const pct=total?Math.round(done/total*100):0;
+  document.getElementById('pack-count').textContent=`${done} / ${total} packed`;
+  document.getElementById('pack-percent').textContent=`${pct}%`;
+  document.getElementById('pack-bar').style.width=pct+'%';
+  const cats=[...new Set(store.packing.map(p=>p.cat))];
+  el.innerHTML=cats.map(cat=>{
+    const items=store.packing.filter(p=>p.cat===cat);
+    return `<div class="check-category">${cat}</div>`+items.map(p=>`
+      <div class="checklist-item${p.done?' done':''}" onclick="togglePackItem('${p.id}')">
+        <div class="check-box${p.done?' checked':''}"></div>
+        <div class="check-label">${p.name}${p.qty?` <span style="color:var(--text-muted);font-size:11px;">— ${p.qty}</span>`:''}</div>
+        <button class="btn btn-danger" style="font-size:9px;padding:4px 8px;" onclick="event.stopPropagation();deleteItem(store.packing,'${p.id}',renderPacking)">×</button>
+      </div>`).join('');
+  }).join('');
+}
+
+// ==================== BUDGET ====================
+function getCurrencySymbol(val){
+  if(!val)return'€';
+  return val.includes('|')?val.split('|')[1]:'€';
+}
+function getActiveCurrency(){
+  return store.activeCurrency||'EUR|€';
+}
+function updateBudgetCurrency(){
+  const sel=document.getElementById('bgt-currency');
+  if(sel){store.activeCurrency=sel.value;save();}
+  renderBudget();
+}
+function syncCurrencyDropdown(){
+  const sel=document.getElementById('bgt-currency');
+  if(sel&&store.activeCurrency){
+    sel.value=store.activeCurrency;
+  }
+}
+function saveBudget(){
+  const name=document.getElementById('bgt-name').value;
+  const amount=parseFloat(document.getElementById('bgt-amount').value)||0;
+  if(!name){alert('Expense name required.');return;}
+  const sel=document.getElementById('bgt-currency');
+  if(sel){store.activeCurrency=sel.value;}
+  store.budget.push({
+    id:uid(),name,amount,
+    cat:document.getElementById('bgt-cat').value,
+    currency:document.getElementById('bgt-currency').value,
+    status:document.getElementById('bgt-status').value,
+    date:document.getElementById('bgt-date').value,
+    notes:document.getElementById('bgt-notes').value
+  });
+  save();
+  clearInputs('bgt-name','bgt-amount','bgt-date','bgt-notes');
+  toggleForm('budget-form');
+  renderBudget();
+}
+function renderBudget(){
+  const el=document.getElementById('budget-list');
+  if(!el)return;
+  syncCurrencyDropdown();
+  const sym=getCurrencySymbol(getActiveCurrency());
+  const total=store.budget.reduce((s,b)=>s+b.amount,0);
+  const paid=store.budget.filter(b=>b.status==='Paid').reduce((s,b)=>s+b.amount,0);
+  const outstanding=store.budget.filter(b=>b.status==='Outstanding'||b.status==='Partially Paid').reduce((s,b)=>s+b.amount,0);
+  document.getElementById('bgt-total').textContent=sym+total.toFixed(2);
+  document.getElementById('bgt-paid').textContent=sym+paid.toFixed(2);
+  document.getElementById('bgt-outstanding').textContent=sym+outstanding.toFixed(2);
+  if(!store.budget.length){el.innerHTML=emptyState('No expenses tracked yet.');return;}
+  const sorted=[...store.budget].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+  el.innerHTML=sorted.map(b=>`
+    <div class="item-row">
+      <div class="item-body">
+        <div class="item-title" style="display:flex;align-items:center;justify-content:space-between;">
+          <span>${b.name}</span>
+          <span style="font-family:var(--font-display);font-size:16px;color:var(--text-white);">${getCurrencySymbol(b.currency)}${b.amount.toFixed(2)}</span>
+        </div>
+        <div class="item-meta">
+          ${b.cat} &nbsp;·&nbsp; ${b.date?formatDate(b.date):'No date'}
+          ${b.notes?` &nbsp;·&nbsp; ${b.notes}`:''}
+        </div>
+        <div style="margin-top:6px;">${statusBadge(b.status)}</div>
+      </div>
+      <div class="item-actions">
+        <button class="btn btn-danger" onclick="deleteItem(store.budget,'${b.id}',renderBudget)">Delete</button>
+      </div>
+    </div>`).join('');
+}
+
+// ==================== RENDER ALL ====================
+function renderAll(){
+  renderDocuments();renderBookings();renderInsurance();
+  renderVisas();renderSchengen();
+  renderTrips();renderDeadlines();
+  renderVaccinations();renderMedical();
+  renderContacts();renderPacking();renderBudget();
+}
+renderAll();
+</script>
+</body>
+</html>
